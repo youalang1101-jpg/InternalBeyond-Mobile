@@ -2,6 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<!-- InternalBeyond Mobile v131-p · 联网搜索与缩放修复轮（Parallel / Exa 联网搜索预设 / 界面缩放下开屏与背景铺满修复） -->
+<!-- v131-p 修订单：①联网搜索 MCP 预设——DIY 页 MCP 卡新增「Parallel 联网搜索」「Exa 联网搜索」两张预设（两家官方公开端点，实测允许浏览器跨域、无需令牌；Tavily 官方端点预检 405 / 需 OAuth，浏览器直连不通，未收录），无令牌预设点「添加」即入列并自动连接；搜索类 tools/call 超时放宽到 60s；服务器列表迷你徽标补底色；GUIDE 补段；②界面缩放（body zoom）把 vh/lvh/dvh 长度一并缩放——开屏层、站点背景两层、Blog 编辑页三处「铺满视口」高度随之变短，缩放 90% 时底部露出 10%（开屏中途露出锁屏一条，用户截图）：开屏层按 1/scale 反向缩放、其余两处经 --ibZoomInv 乘回。 -->
+<!-- InternalBeyond Mobile v130-p · 稳态修复轮（输出上限自适应 / 便笺可删 / 双端记忆卡互认 / Desk 跨分屏拖排 / 对话栏毛玻璃方块 / 间隔输入框） -->
+<!-- v130-p 修订单：①思考链长回复「接收失败」——callAI 把 max_tokens 写死 4096，Claude / DeepSeek-R1 等带思考链的模型思考本身就能吃掉上千 token，正文还没开始就被截停，或服务端按「请求量超上限」直接 400；改为按服务商顶格表自适应（DeepSeek 64k / Anthropic 64k / Gemini 64k / OpenAI 系 32k / 其他 16k–32k），全局设置「输出与续写」新增「单次输出上限」手动档（跟随服务商 / 4k–128k，与电脑端共用同一条 outputSettings 记录），服务端报 max_tokens 超限时自动取其建议值或减半重试（最多 3 次、下限 1024，会话内记住可用值）；思考把预算占满时提示改为明确可读的「思考占满预算」而非笼统的接收失败；②日历便笺右上角「✕」直接删除（删后列表 / 月历角标 / 卡片预览即时刷新），长按菜单保留；③电脑端 AI 写下的便笺（calNotes）与手机端操作卡（ibOps）在对方端的历史消息里也渲染成同款记忆卡，不再互相不认；④麦当劳 / 瑞幸品牌卡原始报文读取补上 reason 字段；⑤Desk 分页桌面拖排重写——图标与小组件可拖到任意分屏（显式页位 _mp.desk.pages 随排序一起存，拖回首页即恢复自动装页），悬停在别页空白处也能落位，拖到最右边缘越过末页会临时开出新分屏（上限 6 页），边缘翻页须先经过屏幕中部且每进一次边缘只翻一页，拖动期间不再重铺、起手改为同步建立拖动态、按「意图页」复位——合修「拖着拖着滑回第一页」；⑥「自动发布最小间隔」输入框换成全站通用文本框样式（数字键盘保留）；⑦对话顶栏 / 输入栏周围的整行「模糊方块」——部分安卓内核把 backdrop-filter 按外边距盒取样且不裁圆角，毛玻璃改挂与边框盒重合的 ::before，宿主裁切，视觉零变化、模糊滑杆仍联动。 -->
 <!-- InternalBeyond Mobile v129-p · 首屏保真与官方接入轮（Desk 首页固定组成＋等比缩放 / 液态玻璃页标 / 麦当劳·瑞幸官方端点＋令牌栏） -->
 <!-- v129-p 修订单：①Desk 首屏保真——第 1 页固定组成（英雄区＋时钟＋前 8 枚图标＋月历＋播放器），任何设备任何首帧都完整可见：组成撑不下时全部页统一 transform 等比缩小（宽高同缩、组件比例不变、页间系数一致；k=预算/组成高，下限 0.5、千分位取整），空间富余时 k=1、与 v130 布局全等；其余条目按有效预算（预算/k）续装页 1 或顺延后页，纵向依旧零滚动；另挂 visualViewport resize / orientationchange / pageshow / load+350ms/1200ms 五路补铺，治 QQ·X5 等安卓壳首帧地址栏未收起、预算量小导致「第一次进去只有月历、拨一下才见播放器」的用户截图案例——即便补铺前的首帧，钉集＋缩放也已保证播放器在页 1。②页码指示液态玻璃化——素圆点改毛玻璃胶囊（blur16 饱和 1.5、内外双高光、明暗双主题各一套），一枚 22px 玻璃圆钮以弹性曲线（cubic-bezier 0.22,1,0.36,1）滑到当前页位；新增 _dkDots/_dkDotsMove 统一重建与位移（位移 4+13i 与 CSS 左内边距 12·点距 13 対表），铺页、滚动同步、整条点跳三处共用；玻璃钮 pointer-events:none 不参与点击命中。③MCP 官方端点入档＋令牌栏——联网核实两家均已开放官方 MCP（均 Streamable HTTP + Bearer Token）：麦当劳 https://mcp.mcd.cn（open.mcd.cn/mcp 手机号登录 → 控制台激活领 Token，限流 600 次/分）、瑞幸 https://gwmcp.lkcoffee.com/order/user/mcp（open.lkcoffee.com 领 Token，与账号绑定、约一个月有效）；预设卡点「添加」自动带上官方端点、焦点直落新增的「令牌 Token」栏；服务器表单新增令牌字段（选填），openMcpEdit/保存流程随行，_rpc 与 _init 两处请求头按 Authorization 携带（填「Bearer xxx」或裸令牌皆可，自动补前缀），令牌随 _mp.mcp.servers 存本机并随备份导出（注意保管备份档）；改令牌不清空已拉取的工具表；列表 hint 与 GUIDE 的 MCP 段同步改为领 Token 指引。④同批另档——电脑端 InternalBeyond v21-sync：日历悬浮窗设置页「同一事项重复留笺」把 v20-sync 的裸原生 select 换成同页通用 ibsel 下拉组件（明暗主题随动），说明文案精简一行；口径与存取零改动（详见该文件头修订行）。 -->
 <!-- InternalBeyond Mobile v128-p · 预设与桌面修复轮（麦当劳 / 瑞幸 MCP 预设与品牌卡 / 好友列表即时刷新 / Splash 六点循环 / 分页桌面去缩放＋电脑兜底） -->
@@ -120,7 +124,7 @@ body.theme-infernal{
   --think:#8ba0c4;--think-line:rgba(140,170,215,0.35);
   --sheet:rgba(20,28,50,0.84);--danger:#e08a8a;--gold:#d0a44e}
 /* v99-m 任务8：低性能机上下滑动时背景图抖一下再弹回——根因是 inset:0 让这两层固定层跟着「视觉视口」走，而手机浏览器地址栏收起 / 展开时视口高度会变，于是背景层被重新布局、重新按 cover 缩放，肉眼就是抖一下。改用 100lvh（大视口高度，恒等于地址栏收起时的高度，不随地址栏动作变化），并各自提一层合成层，视口怎么变都不再重排。 */
-body::before,body::after{content:'';position:fixed;left:0;top:0;width:100%;height:100vh;height:100lvh;z-index:-2;pointer-events:none;transform:translateZ(0);backface-visibility:hidden}
+body::before,body::after{content:'';position:fixed;left:0;top:0;width:100%;height:100vh;height:calc(100lvh * var(--ibZoomInv,1));/* v131-p：界面缩放（body zoom）会把 vh 类长度一起缩——缩到 90% 时底部 10% 露出底色；乘回 1/zoom 校正 */z-index:-2;pointer-events:none;transform:translateZ(0);backface-visibility:hidden}
 body::before{background:var(--bgimg) center/cover no-repeat}
 body::after{background:var(--scrim);z-index:-1}
 .glass{background:var(--glass);border:1px solid var(--glass-line);
@@ -309,9 +313,11 @@ body.theme-infernal .pf-avatar{border-color:rgba(56,60,68,0.95);box-shadow:0 10p
 .f-group{margin-bottom:15px}
 .f-group>label{display:block;font-size:0.7rem;letter-spacing:0.1em;color:var(--tx3);margin-bottom:7px}
 .f-group>label .lb-note{opacity:0.72;letter-spacing:0;font-size:0.66rem}
-.f-group input[type=text],.f-group input[type=password],.f-group input[type=date],.f-group input[type=time],.f-group input:not([type]),.f-group textarea,.f-inline{
+.f-group input[type=text],.f-group input[type=password],.f-group input[type=date],.f-group input[type=time],.f-group input[type=number],.f-group input:not([type]),.f-group textarea,.f-inline{
   width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;
   background:rgba(255,255,255,0.5);color:var(--tx);font-size:1rem;font-family:inherit;-webkit-appearance:none;appearance:none}
+.f-group input[type=number]{-moz-appearance:textfield}/* v130-p：数字输入框入列——「自动发布最小间隔」此前裸奔原生白底黑框 */
+.f-group input[type=number]::-webkit-inner-spin-button,.f-group input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 body.theme-infernal .f-group input,body.theme-infernal .f-group textarea,body.theme-infernal .f-inline{background:rgba(14,22,42,0.5)}
 .f-group textarea{resize:vertical;line-height:1.65;min-height:64px}
 .f-group input:focus,.f-group textarea:focus,.f-inline:focus{outline:none;border-color:var(--acc)}
@@ -414,6 +420,12 @@ body.theme-infernal #conv{background:#141a2e}
 #conv::after{content:'';position:absolute;inset:0;background:var(--scrim);z-index:-1}
 #conv.open{transform:none}
 .cv-head{margin:calc(8px + var(--sat)) 10px 0;height:50px;border-radius:17px;display:flex;align-items:center;flex:none}
+/* v130-p：对话顶栏 / 输入栏「模糊方块」——部分安卓 WebView / 鸿蒙 ArkWeb 等内核把 backdrop-filter 的取样与绘制区按元素的外边距盒算（整行通栏、含上下外边距）且不按圆角裁切，
+   圆角之外露出一块整行矩形毛玻璃（用户截图：顶栏上方到顶栏底、输入栏上 8px 到底部各一块）。桌面 Chrome 无此问题，是内核差异而非样式写错。
+   修法：毛玻璃改挂在无外边距、绝对定位的 ::before 上（与边框盒完全重合、border-radius:inherit），宿主 overflow:hidden 再裁一刀；底色 / 描边 / 阴影仍在宿主，视觉零变化。
+   模糊度跟随视觉设置的模糊滑杆：滑杆写 :root{--ibBlur} 供此处取用。 */
+.cv-head.glass,.cv-input.glass,#cv-selbar.glass{position:relative;z-index:0;overflow:hidden;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.cv-head.glass::before,.cv-input.glass::before,#cv-selbar.glass::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;-webkit-backdrop-filter:blur(var(--ibBlur,20px)) saturate(1.55);backdrop-filter:blur(var(--ibBlur,20px)) saturate(1.55)}
 .cv-title{flex:1;text-align:center;min-width:0}
 #cv-name{font-family:var(--serif);font-weight:600;font-size:1.06rem;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:0.04em}
 #cv-model{display:none}
@@ -599,6 +611,7 @@ body:not(.theme-infernal) .ws-op-card.mcpb-lk{background:linear-gradient(135deg,
 .mcpb-logo{flex:none;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(20,35,70,0.18)}
 .mcpb-mcd .mcpb-logo{background:#DA291C}
 .mcpb-lk .mcpb-logo{background:#2A3C90}
+.mcpb-logo.lg-mcd{background:#DA291C}.mcpb-logo.lg-lk{background:#2A3C90}.mcpb-logo.lg-pl{background:#15192b}.mcpb-logo.lg-exa{background:#1f5fd6}/* v131-p：徽标自带底色（服务器列表的迷你徽标此前没有品牌容器、透明无底） */
 .mcpb-logo svg{width:17px;height:17px}
 .mcpb-hd{display:flex;align-items:center;gap:8px;width:100%;min-width:0}
 .mcpb-tt{flex:1;min-width:0;display:flex;align-items:baseline;gap:6px;overflow:hidden}
@@ -822,7 +835,12 @@ body.theme-infernal .wgt::before{background:linear-gradient(180deg,rgba(165,188,
 .cal-ev-s{font-size:0.62rem;color:var(--tx3);margin-top:2px}
 .cal-empty{text-align:center;font-size:0.72rem;color:var(--tx3);padding:8px 0 2px}
 .cal-note{display:flex;gap:10px;padding:11px 12px;margin:0 13px 9px;border-radius:14px;
-  background:rgba(255,255,255,0.42);border:1px solid var(--panel-line)}
+  background:rgba(255,255,255,0.42);border:1px solid var(--panel-line);position:relative}
+.cal-note .cal-ev-m{padding-right:20px}/* v130-p：给右上角 ✕ 让位 */
+.cal-note-x{position:absolute;top:7px;right:7px;width:22px;height:22px;border-radius:50%;border:none;padding:0;display:flex;align-items:center;justify-content:center;background:rgba(127,150,200,0.13);color:var(--tx3);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cal-note-x svg{width:11px;height:11px}
+.cal-note-x:active{background:rgba(217,138,138,0.22);color:#d98a8a}
+body.theme-infernal .cal-note-x{background:rgba(120,140,190,0.18)}
 body.theme-infernal .cal-note{background:rgba(24,33,58,0.42)}
 .cal-note:last-child{margin-bottom:13px}
 #cal-notes{padding:24px 0 2px}
@@ -1762,7 +1780,7 @@ body.theme-infernal .sb-hero .tp-time{background:none!important;-webkit-backgrou
 /* ═══ v112-m：Splash · Ice Blue Liquid Glass ═══
    目标：薄、透、克制；无滑头；亮/暗主题独立配色；避免旧式“塑料高光条”观感。 */
 #ib-splash{
-  position:fixed;left:0;top:0;width:100%;height:100vh;height:100lvh;z-index:6000;overflow:hidden;background:#dfe9f6;
+  position:fixed;left:0;top:0;width:100%;height:100vh;height:100lvh;min-height:100%;z-index:6000;overflow:hidden;background:#dfe9f6;/* v131-p：min-height:100% 兜底——界面缩放 <100% 时 100lvh 被一起缩小，开屏盖不满、底部露出锁屏一条（用户截图）；正式校正见 ui-user-css 里的 #ib-splash{zoom:1/scale} */
   isolation:isolate;contain:layout paint;transform:translateZ(0);backface-visibility:hidden;will-change:opacity;
   --sp-line-w:min(300px,72vw);
   --sp-gap:14px;
@@ -2161,6 +2179,7 @@ raf=requestAnimationFrame(frame);
         <div class="g-sub">
           <p><strong>外部工具</strong>：添加 HTTP 接口让 AI 在对话中调用外部操作（如 Home Assistant 等）。每个工具配置名称、URL、请求方法和参数。支持调用前确认。请求由浏览器直接发出，目标接口需允许跨域（CORS）。</p>
           <p><strong>MCP 服务器</strong>：连接 MCP 服务器后自动发现可用工具，调用方式与外部工具一致。支持多服务器并行接入，每个服务器可独立启用或禁用其工具。连接失败时请检查跨域（CORS）设置。DIY 页内置<strong>麦当劳</strong>与<strong>瑞幸咖啡</strong>两张官方预设：点「添加」自动填好别名与官方端点（mcp.mcd.cn / gwmcp.lkcoffee.com），再到对应开放平台登录领取个人 Token 填入令牌栏、点「连接」即可接入（令牌随请求以 Authorization: Bearer 发送，只存在你的设备与备份里）；这两家工具的调用结果会渲染成对应品牌主题的小卡片（菜单 / 订单 / 取餐码 / 优惠券自动排版，四种状态各有其形）。用不上可点预设卡右上角 ✕ 隐藏，已添加的服务器也随时可删。</p>
+          <p><strong>联网搜索</strong>：同一处还内置 <strong>Parallel</strong> 与 <strong>Exa</strong> 两张联网搜索预设（两家官方公开端点，无需令牌、允许浏览器直连）。点「添加」即自动入列并连接，之后 AI 在对话里需要时会自己调用搜索 / 抓网页工具（默认仍会先询问你是否允许，可在 MCP 卡关掉「调用前询问」）。公开端点有限流，重度使用可到对方官网领取 API key 填入该服务器的令牌栏。<!-- v131-p --></p>
           <p><strong>连接 GitHub 仓库（MCP 进阶方案）</strong>：只需要读改仓库文件时，用 ICode 页 → GitHub 分区的内置直连即可，无需本方案。以下面向想让 AI 通过 MCP 直接调用 GitHub 接口的进阶用法。<!-- v101-m 任务3：步骤拆行 --></p>
           <p><strong>①</strong> 在 GitHub 生成访问令牌（勾选 repo 权限）。</p>
           <p><strong>②</strong> 在电脑上运行官方 github-mcp-server，填入令牌。</p>
@@ -2721,7 +2740,7 @@ self.addEventListener(&#x27;fetch&#x27;,function(e){
         <div class="tog"><div class="tog-m"><div class="tog-t">启用社交圈</div><div class="tog-s">InternetBeyond 的全局总开关。关闭后对话不再注入动态、AI 停止发布/评论与自动发帖。</div></div><div class="sw2" id="ib-on"></div></div>
         <div class="tog"><div class="tog-m"><div class="tog-t">AI 自动发布动态</div><div class="tog-s">按下方间隔，在打开应用或一轮对话结束时触发 TA 发布一条动态。</div></div><div class="sw2" id="ib-autopost"></div></div>
         <div class="f-group" style="margin-top:14px"><label>自动发布最小间隔 <span class="lb-note">（自定义，最短 5 分钟、最长 7 天）</span></label>
-          <div style="display:flex;gap:8px"><input id="ib-gap-n" type="number" min="1" step="1" inputmode="numeric" placeholder="数值" style="flex:1">
+          <div style="display:flex;gap:8px"><input id="ib-gap-n" inputmode="numeric" pattern="[0-9]*" placeholder="数值" style="flex:1;min-width:0" autocomplete="off"><!-- v130-p：去掉 type=number——与全站其他数字框同口径（inputmode 数字键盘＋通用文本框样式），保存逻辑 _ibGapUiSave 自行钳制 -->
           <div class="sel" style="flex:1"><select id="ib-gap-u"><option value="1">分钟</option><option value="60">小时</option><option value="1440">天</option></select></div></div>
         </div><!-- v121-p：#4.1 原 6/12/24/48 小时四档退役，改「数值＋单位」自定义；存 ib.gapMin（分钟），旧 gapH 自动换算显示 -->
         <div class="tog"><div class="tog-m"><div class="tog-t">AI 自动评论</div><div class="tog-s">允许 TA 对自己有权看到的动态发表评论。</div></div><div class="sw2" id="ib-autocmt"></div></div>
@@ -2773,6 +2792,9 @@ self.addEventListener(&#x27;fetch&#x27;,function(e){
           <div class="sel"><select id="out-cont"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="8">8</option></select></div>
         </div>
         <p class="hint">回复触及模型单次输出上限而被截断时，系统会自动带着已生成内容请求"无缝续写"并拼接。这里配置自动续写的最大轮数。与电脑版共用同一套设置。</p>
+        <div class="f-group" style="margin:8px 0 6px"><label>单次输出上限 <span class="lb-note">（默认自动：按服务商顶格给，超限自动降档）</span></label>
+          <div class="sel"><select id="out-maxtok"><option value="0">自动（推荐）</option><option value="4096">4096</option><option value="8192">8192</option><option value="16384">16384</option><option value="32768">32768</option><option value="65536">65536</option><option value="131072">131072</option></select></div></div>
+        <p class="hint">一次回复最多生成多少 token（思考链与正文合计）。此前固定为 4096，思考链稍长正文就会被截断成空回复；现与电脑版同口径顶格给出。个别中转不接受大上限时会按其报错自动降档，一般无需手动调；只有明确想限制长度时才选具体数值。<!-- v130-p --></p>
         <div class="f-group" style="margin:8px 0 6px"><label>工具连续调用轮数 <span class="lb-note">（默认 2；0 = 结果只在下一条消息回传）</span></label>
           <div class="sel"><select id="out-tools"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option></select></div></div>
         <p class="hint">AI 在对话里调用外部工具 / MCP / 定位天气 / 查看动态等取数指令后，结果立即回传并让 TA 在同一轮里继续作答（可再次调用），最多这么多轮。<!-- v84-m r1：任务 1 --></p>
@@ -3926,7 +3948,9 @@ function _uiCustomApply(){
   const chatFs=u.chatFs||1;
   if(chatFs!==1)css.push('.m{font-size:'+(0.92*chatFs).toFixed(3)+'rem}');
   const scale=u.uiScale||1;
-  if(scale!==1)css.push('body{zoom:'+scale+'}');
+  if(scale!==1){css.push('body{zoom:'+scale+'}');
+    var _zi=(1/scale).toFixed(4);css.push(':root{--ibZoomInv:'+_zi+'}#ib-splash{zoom:'+_zi+'}');/* v131-p：界面缩放用的是 body{zoom}，Chrome 会把 vh/lvh/dvh 长度一并缩放——开屏层、站点背景两层、Blog 编辑页三处「铺满视口」的高度随之变短（缩放 90% 时底部露出 10%，开屏时露出的是锁屏一条）。开屏层直接按 1/scale 反向缩放（文字尺寸也保持不变），其余两处经 --ibZoomInv 乘回 */
+  }
   [['szTop','--szTop'],['szDock','--szDock'],['szBrv','--szBrv'],['szCvh','--szCvh'],['szCvi','--szCvi']].forEach(p=>{const v9=u[p[0]]||1;if(v9!==1)css.push('body{'+p[1]+':'+v9+'}')});/* v128 任务1：五区尺寸变量（缺省 1 不落 CSS，原样式零变化） */
   const pa=(u.panelAlpha||100)/100;
   const gb=u.glassBase||'';/* v72-m r6：玻璃底色三选一（默认/黑/白，两主题同覆写） */
@@ -3965,6 +3989,7 @@ function _uiCustomApply(){
   if(u.blurPx!=null){
     const bp=Math.max(0,Math.min(40,u.blurPx));
     css.push('.glass{-webkit-backdrop-filter:blur('+bp+'px) saturate(1.55)!important;backdrop-filter:blur('+bp+'px) saturate(1.55)!important}');
+    css.push(':root{--ibBlur:'+bp+'px}');/* v130-p：对话顶栏 / 输入栏的毛玻璃已改挂 ::before，经变量取同一档模糊 */
     css.push('#sec-profile-cal .wgt,.sb-ic{-webkit-backdrop-filter:blur('+bp+'px) saturate(1.4)!important;backdrop-filter:blur('+bp+'px) saturate(1.4)!important}');/* v68-m d1：Desk 玻璃件登记进模糊滑杆清单 */
     css.push('body.theme-infernal .card,body.theme-infernal .ask-card,body.theme-infernal .brv-top-m,body.theme-infernal .bsd-panel,body.theme-infernal .tp-panel,body.theme-infernal .spill,body.theme-infernal .msel,body.theme-infernal .ask-free,body.theme-infernal .vmsg,body.theme-infernal .mi-btn,body.theme-infernal .ic-plist .ic-prow,body.theme-infernal #tp-list .tp-item{-webkit-backdrop-filter:blur('+bp+'px) saturate(1.45)!important;backdrop-filter:blur('+bp+'px) saturate(1.45)!important}');
   }
@@ -4236,7 +4261,9 @@ function _dkOsShell(host){
     var p1=document.createElement('div');p1.className='desk-pg';p1.appendChild(host);osw.appendChild(p1);
     var dots=document.createElement('div');dots.id='dk-dots2';
     osw.parentNode.insertBefore(dots,osw.nextSibling);
-    osw.addEventListener('scroll',function(){var i=Math.round(osw.scrollLeft/Math.max(1,osw.clientWidth));var ds=document.getElementById('dk-dots2');if(ds)_dkDotsMove(ds,i)},{passive:true});
+    osw.addEventListener('scroll',function(){var i=Math.round(osw.scrollLeft/Math.max(1,osw.clientWidth));var ds=document.getElementById('dk-dots2');if(ds)_dkDotsMove(ds,i);
+      if(Date.now()>(osw._pgLock||0)&&Math.abs(osw.scrollLeft-i*osw.clientWidth)<=1.5)osw._pg=i;/* v130-p：停稳在某页才记为当前「意图页」（程序翻页期间上锁，不被起步帧覆盖） */
+    },{passive:true});
     dots.style.cursor='pointer';dots.addEventListener('click',function(e){/* v130 需求④：圆点可点跳页（电脑端兜底之一；命中按横向最近的圆点算） */
       var kids=Array.prototype.slice.call(dots.querySelectorAll('i'));if(!kids.length)return;
       var bx=e.clientX,best=0,bd=1e9;kids.forEach(function(el,k){var r=el.getBoundingClientRect();var d2=Math.abs(bx-(r.left+r.width/2));if(d2<bd){bd=d2;best=k}});
@@ -4259,6 +4286,7 @@ function _dkOsTear(){/* 收件回 #sb-desk、拆壳、清缩放——切回经�
 }
 function _dkOsFlow(){/* 铺页主流程：量预算 → 按 order 打包 → 分发（v130：逐页缩放退役，组件锁定原尺寸；电脑端兜底见 _dkOsNavBind） */
   if(_dkOsBusy)return;
+  if(document.body.classList.contains('dk-drag')){_dkOsPend=1;return}/* v130-p：拖排进行中不重铺——拖动期间 visualViewport / resize 触发的重铺会把条目挪回原页并复位滚动位置（「拖着拖着滑回第一页」来源之一），松手后补铺 */
   if(!_dkOsOn()){_dkOsTear();return}
   var host=$('sb-desk');if(!host)return;
   if(document.getElementById('desk-pager')){try{_ddPager(1)}catch(e){}}/* 经典壳在场先拆（模式切换瞬间） */
@@ -4285,13 +4313,23 @@ function _dkOsFlow(){/* 铺页主流程：量预算 → 按 order 打包 → 分
     var hcs=getComputedStyle(host),padV=(parseFloat(hcs.paddingTop)||0)+(parseFloat(hcs.paddingBottom)||0);/* fix-r5：网格自身上下内边距计入预算 */
     var pages;/* v131 需求①：首页固定组成＋整页等比缩放——第 1 页永远包含英雄区、前 8 枚图标、月历与播放器；
        任何屏高（含安卓地址栏未收起的首帧）都完整可见：不够高时所有页统一乘等比系数 k 缩小（transform scale，
-       宽高同缩、组件比例不变、页间一致），富余时 k=1 与 v130 全等；其余条目按有效预算 budget/k 续装页 1 或顺延后页 */
+       宽高同缩、组件比例不变、页间一致），富余时 k=1 与 v130 全等；其余条目按有效预算 budget/k 续装页 1 或顺延后页。
+       v130-p：显式页位——用户把条目拖到别的分屏后记在 _mp.desk.pages[key]=页号（1 起；0 / 缺省＝自动）。此前页位完全由 order 自动装页决定，
+       拖到第 2 页松手后重铺又被装回第 1 页（或被「首页固定组成」钉回去），图标和小组件始终拖不到别的分屏。现在：自动项照旧走首页固定组成＋溢出顺延，
+       显式项从其页号起装、页满顺延到下一页；中间空页自动压缩并把压缩后的页号静默写回 */
     (function(){
       var isIco=function(el){return String(el.dataset.dk||'').indexOf('app:')===0};
       var pinKinds={hero:1,clock:1,cal:1,music:1};
-      var pin=[],rest=[],icoN=0;
+      var pgMap=(_mp&&_mp.desk&&_mp.desk.pages)||{};
+      var auto=[],exp={},maxP=0;
       live.forEach(function(el,i){
-        var kd=String(el.dataset.dk||'');
+        var p=parseInt(pgMap[String(el.dataset.dk||'')]);
+        if(isFinite(p)&&p>0){(exp[p]=exp[p]||[]).push(i);if(p>maxP)maxP=p}
+        else auto.push(i);
+      });
+      var pin=[],rest=[],icoN=0;
+      auto.forEach(function(i){
+        var el=live[i],kd=String(el.dataset.dk||'');
         if(pinKinds[kd]){pin.push(i);return}
         if(isIco(el)&&icoN<8){pin.push(i);icoN++;return}
         rest.push(i);
@@ -4308,8 +4346,21 @@ function _dkOsFlow(){/* 铺页主流程：量预算 → 按 order 打包 → 分
         if(!spill.length){var cand=p1.concat(r.ix).sort(function(a,b){return a-b});if(rowsH(cand)<=be){p1=cand;return}}
         r.ix.forEach(function(i){spill.push(i)});
       });
-      var tail=_dkPack(spill.map(function(i){return items[i]}),be,gap).map(function(pg){return pg.map(function(q){return spill[q]})});
-      pages=(p1.length?[p1]:[]).concat(tail);
+      var out=[p1],carry=spill.slice(),p=1;
+      while(carry.length||p<=maxP){/* 第 p 页＝上页溢出＋显式落在 p 的条目，按全局 order 排，装不下的顺延 */
+        var list=carry.concat(exp[p]||[]).sort(function(a,b){return a-b});
+        var packed=_dkPack(list.map(function(i){return items[i]}),be,gap);
+        out.push(packed.length?packed[0].map(function(q){return list[q]}):[]);
+        carry=[];for(var q2=1;q2<packed.length;q2++)packed[q2].forEach(function(q){carry.push(list[q])});
+        p++;if(p>40)break;
+      }
+      var kept=[];out.forEach(function(pg,idx){if(idx===0||pg.length)kept.push(pg)});/* 压缩中间空页（首页永远保留） */
+      var dirty=false;
+      kept.forEach(function(pg,idx){pg.forEach(function(i){var key=String(live[i].dataset.dk||'');var cur=parseInt(pgMap[key])||0;
+        if(cur>0&&idx<cur){/* 只把「空页压缩造成的前移」写回；页满顺延造成的后移不落盘（腾出空间会自动回来） */
+          if(idx>0)pgMap[key]=idx;else delete pgMap[key];dirty=true}})});
+      if(dirty){try{_mp.desk=_mp.desk||{};_mp.desk.pages=pgMap;saveMP()}catch(e){}}
+      pages=kept;
       osw._dkk=k;
     })();
     if(!pages.length)pages=[[]];
@@ -4332,20 +4383,22 @@ function _dkOsFlow(){/* 铺页主流程：量预算 → 按 order 打包 → 分
       else{grid.style.transform='';grid.style.transformOrigin=''}
     });
     try{Array.prototype.forEach.call(osw.parentNode.querySelectorAll('.dk-osnav'),function(b){b.style.top=(osw.offsetTop+Math.round(budget/2))+'px'})}catch(e){}/* v130 需求④：悬停箭头随预算垂直居中 */
+    try{Array.prototype.forEach.call(osw.querySelectorAll('.desk-pg.dk-tmp'),function(pd3){pd3.classList.remove('dk-tmp')})}catch(e){}/* v130-p：拖动中临时开的新分屏转正（没条目的会被上面的裁页逻辑移除） */
     var ds=document.getElementById('dk-dots2');
-    if(ds){var n=osw.children.length;var cur=Math.round(osw.scrollLeft/Math.max(1,osw.clientWidth));
+    if(ds){var n=osw.children.length;var cur=(osw._pg!=null&&isFinite(osw._pg))?osw._pg:Math.round(osw.scrollLeft/Math.max(1,osw.clientWidth));/* v130-p：按「意图页」复位——此前按 scrollLeft 四舍五入，平滑翻页进行到一半时重铺会把页码算回旧页（滑回第一页的主因之一） */
       if(cur>n-1)cur=n-1;if(cur<0)cur=0;
       _dkDots(ds,n,cur);ds.style.display=n>1?'':'none';
       try{Array.prototype.forEach.call(osw.parentNode.querySelectorAll('.dk-osnav'),function(b){b.style.visibility=n>1?'':'hidden'})}catch(e){}/* v130 需求④：单页时箭头隐身 */
-      osw.scrollLeft=cur*osw.clientWidth;
+      osw.scrollLeft=cur*osw.clientWidth;osw._pg=cur;
     }
   }finally{_dkOsBusy=0}
   _dkOsPend=0;
 }
 /* ── v130 需求④：电脑端兜底——不再仅手滑可翻页：圆点可点（见 _dkOsShell）＋滚轮＋键盘 ←→＋鼠标拖拽＋悬停左右箭头；触屏滑动与拖排边缘翻页照旧 ── */
-function _dkOsIdx(osw){return Math.round(osw.scrollLeft/Math.max(1,osw.clientWidth))}
+function _dkOsIdx(osw){var n=osw.children.length;var i=(osw._pg!=null&&isFinite(osw._pg))?osw._pg:Math.round(osw.scrollLeft/Math.max(1,osw.clientWidth));if(i>n-1)i=n-1;if(i<0)i=0;return i}/* v130-p：优先读意图页 */
 function _dkOsGoto(i){var osw=document.getElementById('dk-osw');if(!osw)return;
   var n=osw.children.length;if(i<0)i=0;if(i>n-1)i=n-1;
+  osw._pg=i;osw._pgLock=Date.now()+700;/* v130-p：先记意图页并上锁 0.7s，重铺 / 滚动监听在此期间不改写 */
   try{osw.scrollTo({left:i*osw.clientWidth,behavior:'smooth'})}catch(e){osw.scrollLeft=i*osw.clientWidth}}
 function _dkOsNavBind(osw){if(osw._nav)return;osw._nav=1;
   var wl=0;osw.addEventListener('wheel',function(e){/* 滚轮：横竖皆认，420ms 一步、幅度阈 12 挡触控板惯性 */
@@ -4379,20 +4432,33 @@ function _dkOsNavBind(osw){if(osw._nav)return;osw._nav=1;
   if(document.querySelector('.sheet.open'))return;
   e.preventDefault();_dkOsGoto(_dkOsIdx(osw)+(e.key==='ArrowRight'?1:-1));
 })})();
-var _dkOsEg={t:null,dir:0,cd:0};
-function _dkOsEdge(e){/* 拖动中的边缘翻页：悬停 0.45s 触发，0.9s 冷却 */
+var _dkOsEg={t:null,dir:0,cd:0,armed:0};
+function _dkOsEdgeReset(){if(_dkOsEg.t){clearTimeout(_dkOsEg.t);_dkOsEg.t=null}_dkOsEg.dir=0;_dkOsEg.armed=0}
+function _dkOsEdge(e){/* 拖动中的边缘翻页：悬停 0.45s 触发。v130-p：① 须先在屏幕中部待过（armed）才生效——原先指针起手就落在边缘（第一列图标）也会开始计时；
+   ② 每次进入边缘只翻一页，要继续翻须先离开边缘再进——原先只靠 0.9s 冷却，手指停在边缘会一页接一页翻到头（「直接滑到第一页」的来源之一）；
+   ③ 向右越过最后一页时临时开一页新分屏（上限 6 页）供放置 */
   var osw=document.getElementById('dk-osw');if(!osw)return;
-  var W=window.innerWidth,x=e.clientX,dir=0;
-  if(x<30)dir=-1;else if(x>W-30)dir=1;
-  if(!dir){if(_dkOsEg.t){clearTimeout(_dkOsEg.t);_dkOsEg.t=null}_dkOsEg.dir=0;return}
+  var W=window.innerWidth,x=e.clientX,dir=0,Z=34;
+  if(x<Z)dir=-1;else if(x>W-Z)dir=1;
+  if(!dir){if(_dkOsEg.t){clearTimeout(_dkOsEg.t);_dkOsEg.t=null}_dkOsEg.dir=0;if(x>Z+16&&x<W-Z-16)_dkOsEg.armed=1;return}
+  if(!_dkOsEg.armed)return;
   if(dir===_dkOsEg.dir&&_dkOsEg.t)return;
   if(_dkOsEg.t)clearTimeout(_dkOsEg.t);
   _dkOsEg.dir=dir;
   _dkOsEg.t=setTimeout(function(){_dkOsEg.t=null;
     var now=Date.now();if(now-_dkOsEg.cd<900)return;_dkOsEg.cd=now;
-    var i=Math.round(osw.scrollLeft/Math.max(1,osw.clientWidth))+dir;
-    var n=osw.children.length;if(i<0)i=0;if(i>n-1)i=n-1;
-    try{osw.scrollTo({left:i*osw.clientWidth,behavior:'smooth'})}catch(x2){osw.scrollLeft=i*osw.clientWidth}
+    _dkOsEg.armed=0;
+    var n=osw.children.length,i=_dkOsIdx(osw)+dir;
+    if(i>n-1){
+      if(n<6&&document.body.classList.contains('dk-drag')){
+        var pd=document.createElement('div');pd.className='desk-pg dk-tmp';pd.innerHTML='<div class="sb-desk dk-osgrid" data-ospg="'+(n+1)+'"></div>';osw.appendChild(pd);
+        try{var gk=osw._dkk||1,g2=pd.firstElementChild;if(gk<0.999){g2.style.transform='scale('+gk+')';g2.style.transformOrigin='top center'}}catch(x4){}
+        var ds=document.getElementById('dk-dots2');if(ds){_dkDots(ds,n+1,i);ds.style.display=''}
+        n++;
+      }else i=n-1;
+    }
+    if(i<0)i=0;
+    _dkOsGoto(i);
     try{if(navigator.vibrate)navigator.vibrate(8)}catch(x3){}
   },450);
 }
@@ -5976,8 +6042,18 @@ function drawCalNotes(){
       +'<div class="cal-ev-s">'+esc((n.aiName||n.author||n.by||'AI')+((n.itemTitle||n.title)?' · '+(n.itemTitle||n.title):'')+((n.ts||n.created)?' · '+fmtTime(n.ts||n.created):''))+'</div></div>';/* v49h-m：对齐电脑端便笺字段（body/aiName/itemTitle/ts），此前字段名对不上导致"没同步" */
     pressable(d,()=>actionSheet([{label:'删除这张便笺',danger:true,fn:async()=>{
       try{await dbDelete('calNotes',n.id)}catch(e){toast('删除失败');return}
-      await loadCal();drawCalNotes();toast('已删除');
+      await loadCal();drawCalNotes();try{_notesPeek()}catch(e){}toast('已删除');
     }}]));
+    /* v130-p：右上角小 ✕ 直接删除——此前只能长按弹菜单，列表里长按常被滚动吃掉，用户以为不能删 */
+    const x=document.createElement('button');x.type='button';x.className='cal-note-x';x.setAttribute('aria-label','删除这张便笺');
+    x.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg>';
+    ['touchstart','pointerdown','contextmenu'].forEach(ev=>x.addEventListener(ev,e=>{e.stopPropagation();if(ev==='contextmenu')e.preventDefault()},{passive:ev!=='contextmenu'}));
+    x.addEventListener('click',async e=>{e.stopPropagation();e.preventDefault();
+      if(x._busy)return;x._busy=1;
+      try{await dbDelete('calNotes',n.id)}catch(err){x._busy=0;toast('删除失败');return}
+      await loadCal();drawCalNotes();try{_notesPeek()}catch(err){}toast('已删除');
+    });
+    d.appendChild(x);
     box.appendChild(d);
   });
 }
@@ -6428,9 +6504,17 @@ function _mcpBrandOfAlias(a){a=String(a||'').toLowerCase();
   if(/^(luckin(coffee)?|ruixing|lk|lkcoffee)$/.test(a))return 'lk';
   return null}
 function _mcpBrandOfTool(name){var p=String(name||'').split('.');return (p.length>=3&&p[0]==='mcp')?_mcpBrandOfAlias(p[1]):null}
+function _mcpSearchOfAlias(a){a=String(a||'').toLowerCase();/* v131-p：联网搜索预设（Parallel / Exa）——只用于预设卡隐现与列表徽标，不走品牌主题卡（搜索结果仍由通用工具卡展示） */
+  if(/^(parallel|parallelai|parallel-?search|plsearch)$/.test(a))return 'pl';
+  if(/^(exa|exaai|exa-?search|exasearch)$/.test(a))return 'exa';
+  return null}
+function _mcpPresetOfAlias(a){return _mcpBrandOfAlias(a)||_mcpSearchOfAlias(a)}
 var MCP_BRANDS={
-  mcd:{name:'麦当劳',logo:'<span class="mcpb-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC72C" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 20.4C3.6 6.4 12 6.4 12 15.2 12 6.4 20.4 6.4 20.4 20.4"/></svg></span>'},
-  lk:{name:'瑞幸咖啡',logo:'<span class="mcpb-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.2 3.2 7.1 6.4M8.2 3.2 6.3 4.6M8.2 3.2 9.9 4.8M15.8 3.2 16.9 6.4M15.8 3.2 17.7 4.6M15.8 3.2 14.1 4.8"/><path d="M6.4 8.6h11.2l-1.15 9.6a2 2 0 0 1-1.99 1.76H9.54a2 2 0 0 1-1.99-1.76L6.4 8.6z"/><path d="M6.7 11.6h10.6"/></svg></span>'}
+  mcd:{name:'麦当劳',logo:'<span class="mcpb-logo lg-mcd"><svg viewBox="0 0 24 24" fill="none" stroke="#FFC72C" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 20.4C3.6 6.4 12 6.4 12 15.2 12 6.4 20.4 6.4 20.4 20.4"/></svg></span>'},
+  lk:{name:'瑞幸咖啡',logo:'<span class="mcpb-logo lg-lk"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.2 3.2 7.1 6.4M8.2 3.2 6.3 4.6M8.2 3.2 9.9 4.8M15.8 3.2 16.9 6.4M15.8 3.2 17.7 4.6M15.8 3.2 14.1 4.8"/><path d="M6.4 8.6h11.2l-1.15 9.6a2 2 0 0 1-1.99 1.76H9.54a2 2 0 0 1-1.99-1.76L6.4 8.6z"/><path d="M6.7 11.6h10.6"/></svg></span>'},
+  /* v131-p：联网搜索两家（徽标底色走 .lg-* 类，列表里的迷你徽标同样上色） */
+  pl:{name:'Parallel 搜索',logo:'<span class="mcpb-logo lg-pl"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M6.5 5v14M12 5v14M17.5 5v14"/></svg></span>'},
+  exa:{name:'Exa 搜索',logo:'<span class="mcpb-logo lg-exa"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="5.6"/><path d="M20 20l-5.2-5.2"/></svg></span>'}
 };
 function _mcpToolLabel(name){/* 工具名 → 动作友好名（识别常见英文动词，识别不了就露原名） */
   var t=String(name||'').split('.').slice(2).join('.')||String(name||'');
@@ -6488,7 +6572,7 @@ function _mcpBrandCard(b,op,res){/* 品牌主题卡全套：待确认 / 执行�
   var ok=okKnown&&res.ok===true,fail=okKnown&&res.ok===false;
   var stTxt=pending?'待确认':running?'执行中…':ok?'完成':fail?'失败':'已发起';
   var stCls=pending?'pend':running?'run':ok?'ok':fail?'bad':'idle';
-  var raw=String((res&&(res.response||res.detail))||'');
+  var raw=String((res&&(res.response||res.detail||res.reason))||'');/* v130-p：电脑端失败结果的字段是 reason——导入后失败卡此前只显示「调用失败」四个字 */
   var parsed=ok?_mcpBrandParse(raw):null;
   var detail=raw;
   if(op.args)detail=(detail?detail+'\n\n':'')+'参数：'+op.args;
@@ -6651,7 +6735,8 @@ function searchCard(s){/* v58-m 修复：原 toggle 的 exp-open 类无 CSS 对�
 }
 function memOpCard(r){/* v58-m 照电脑端 _amBuildMemCard：折叠卡，详情点开才展示 */
   const d=document.createElement('div');d.className='ws-op-card'+(r.ok===false?' warn':'')+(r.detail?' expandable':'');
-  d.innerHTML=(r.ok===false?WS_ICON.warn:WS_ICON.mem)
+  const _calLike=/便笺/.test(String((r&&r.label)||''));/* v130-p：便笺类结果卡（本端 ibOps 与电脑端 calNotes 同款）用日历图标 */
+  d.innerHTML=(r.ok===false?WS_ICON.warn:(_calLike?WS_ICON.cal_add:WS_ICON.mem))
     +'<span class="ws-op-text">'+esc(r.label||'记忆操作')+'</span>'
     +(r.detail?'<svg class="ws-op-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg><div class="ws-op-detail">'+esc(r.detail)+'</div>':'');
   if(r.detail)d.addEventListener('click',e=>{e.stopPropagation();d.classList.toggle('expanded')});
@@ -6752,6 +6837,7 @@ function renderAiBody(host,msgEl,m){
   (m.wsSearches||[]).forEach(s=>host.appendChild(searchCard(s)));
   (m.memOps||[]).forEach(r=>host.appendChild(memOpCard(r)));
   (m.ibOps||[]).forEach(r=>host.appendChild(memOpCard(r)));/* v72-m：Beyond/播放器/天气操作卡复用记忆卡样式 */
+  (m.calNotes||[]).forEach(r=>host.appendChild(memOpCard(r)));/* v130-p：电脑端把便笺结果存在 calNotes（{ok,label,detail}），此前本端只认 memOps/ibOps——导入电脑端记录后便笺卡消失 */
   if(_ph)host.appendChild(_buildWsPhantomHintM(_ph,m));/* v65-m 空头支票卡挂在最末 */
 }
 function _hmOnly(ts){const d=new Date(ts||Date.now());return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}/* v59-m t2：每条气泡下只显时分，昨天/周几等描述全部退场 */
@@ -7540,6 +7626,35 @@ function _ibOaiCacheDiagM(cfg,msgs){
     else console.warn('[IB手机缓存诊断] ✗ 前缀提前变化（第 '+d+' 字符；上一轮最新消息起点 '+prev.lastStart+'），请检查 system/历史是否混入逐轮变化内容。');
   }catch(e){}
 }
+/* ═══ v130-p：输出上限——移植电脑端口径 ═══
+   根因：callAI 把 max_tokens 写死 4096（mMaxTokens 设置 v49h-m 已移除、永远取默认值），非 Anthropic 渠道的思考链走
+   <thinking> 标签、与正文共用这 4096：思考一长正文还没开始就被 finish=length 截断，续写轮拿到空正文直接跳出，
+   genReply 报「返回为空」——即用户反馈的"思考链过长就接收失败"。电脑端从未复现是因为它按服务商顶格给上限并在报错时自动降档。
+   现在：① 同表顶格（DeepSeek 65536 / Anthropic 64000 / 其余 32768…，与电脑端 _PROVIDER_MAX_OUT 同表）；
+   ② 全局设置「输出与续写」新增「单次输出上限」手动档（0=自动，存 outputSettings.maxTokens，与电脑端共用同一条记录）；
+   ③ 服务端报「超过上限」→ 读取报错里的建议值一步到位，否则减半（下限 1024）最多 3 次；④ pa.maxTokens（摘要等内部调用）优先。 */
+const _PROVIDER_MAX_OUT_M={deepseek:65536,anthropic:64000,openai:32768,grok:32768,moonshot:32768,mistral:32768,qwen:32768,glm:32768,doubao:32768,minimax:32768,yi:16384,baichuan:16384,gemini:65536,custom:32768};
+var _maxTokMemM={};/* 某 API+模型 被服务端降档后记住（仅存内存，刷新清零）：续写轮与后续消息直接用被接受的上限首发，不再每次先撞一次 400 */
+function _maxTokKeyM(cfg,man){return String((cfg&&cfg.id)||'')+'|'+String((cfg&&cfg.model)||'')+'|'+(man||0)}
+function _chatMaxTokensM(cfg,pa){
+  if(pa&&pa._maxTokOverride>0)return pa._maxTokOverride;
+  if(pa&&pa.maxTokens>0)return Math.max(256,parseInt(pa.maxTokens)||256);
+  var man=0;try{man=parseInt(_out&&_out.maxTokens)||0}catch(e){}
+  var mem=_maxTokMemM[_maxTokKeyM(cfg,man)];if(mem>0)return mem;
+  if(man>0)return Math.max(1024,Math.min(400000,man));
+  return _PROVIDER_MAX_OUT_M[cfg&&cfg.provider]||16384;
+}
+function _errLooksMaxTokM(s){return /max_?tokens|max_completion_tokens|max_output_tokens|maxOutputTokens|output\s*(token\s*)?limit|输出(长度|token)?上限/i.test(String(s||''))}
+function _errWantsCompletionParamM(s){s=String(s||'');return /max_completion_tokens/i.test(s)&&/max_tokens/i.test(s)&&/not\s+support|unsupported|instead|use\b|不支持|请使用|改用/i.test(s)}
+function _extractSuggestedMaxTokM(s){/* 兼容 OpenAI "supports at most 16384 completion tokens"、Anthropic "65536 > 32000, which is the maximum"、中转 "max_tokens 不能超过 8192" */
+  s=String(s||'');
+  var m=s.match(/(?:less than or equal to|no more than|at most|maximum(?:\s+allowed)?(?:\s+of)?|不能超过|不得超过|至多|最大为?|上限[为是]?)[^0-9]{0,12}([0-9][0-9,]{2,8})/i)
+       ||s.match(/support(?:s|ed)?(?:\s+\S+){0,3}\s+([0-9][0-9,]{2,8})\s*(?:output\s+|completion\s+)?tokens/i)
+       ||s.match(/[0-9][0-9,]*\s*>\s*([0-9][0-9,]{2,8})/);
+  if(!m)return 0;
+  var n=parseInt(m[1].replace(/,/g,''),10);
+  return(n>=256&&n<=400000)?n:0;
+}
 async function callAI(cfg,hist,sys,onDelta,signal,pa){
   const prov=PROVIDERS[cfg.provider]||PROVIDERS.custom;
   const fmt=prov.format||'openai';
@@ -7547,7 +7662,8 @@ async function callAI(cfg,hist,sys,onDelta,signal,pa){
   const model=(cfg.model||prov.model||'').trim();
   const stream=cfg.streaming!==false;
   const think=!!cfg.thinkingEnabled;
-  const maxT=Math.max(256,parseInt(cfg.mMaxTokens)||4096);/* v49h-m：单次回复长度上限设置已移除，统一走默认/接口侧配置 */
+  try{await loadOUT()}catch(e){}/* v130-p：读手动档 */
+  const maxT=_chatMaxTokensM(cfg,pa);/* v130-p：不再写死 4096——服务商顶格 / 全局手动档 / pa.maxTokens；超限报错见下方自动降档重试 */
   if(!ep)throw new Error('未填写 Endpoint');
   const useWS=!!cfg.webSearch&&!(pa&&pa._noWS);
   const _hist0=hist,_sys0=sys;
@@ -7629,7 +7745,7 @@ async function callAI(cfg,hist,sys,onDelta,signal,pa){
 
   let res=await fetch(url,{method:'POST',headers:headers,body:body,signal:signal});
   if(!res.ok){
-    const errTxt=await res.text().catch(()=>'');
+    let errTxt=await res.text().catch(()=>'');
     /* imgfix-r1：端点 4xx 拒收图片内容（如 unknown variant image_url）→ 去图改文字说明重发一次；非「体积超限」类另记入否决表，后续不再附图 */
     if(res.status>=400&&res.status<500&&!(pa&&pa._noImg)&&_errImgRejectM(errTxt)&&_histHasImgM(_hist0)){
       if(_errImgSizeM(errTxt)){try{toast('图片体积超过该 API 限制，已改为文字说明重发')}catch(e2){}}else if(_errImgCapRejectM(errTxt)){_visionDeadMarkM(cfg)}else{try{toast('该 API 拒收了本次图片（疑似格式或链路问题），已改为文字说明重发；未记入不支持名单')}catch(e2){}}
@@ -7653,6 +7769,18 @@ async function callAI(cfg,hist,sys,onDelta,signal,pa){
         const b2=JSON.parse(body);delete b2.max_tokens;b2.max_completion_tokens=maxT;
         res=await fetch(url,{method:'POST',headers:headers,body:JSON.stringify(b2),signal:signal});
       }catch(e){}
+    }
+    /* v130-p：输出上限超过该模型 / 中转允许值（400/413/422 且报错指向 max_tokens 类字段，且不是「换参数名」那类）→ 优先用报错里的建议值一步到位，否则减半（下限 1024），最多 3 次 */
+    if(!res.ok&&(res.status===400||res.status===413||res.status===422)){
+      const _t2m=res.bodyUsed?errTxt:await res.text().catch(()=>errTxt);
+      const _tries=(pa&&pa._maxTokTries)||0;
+      if(_tries<3&&maxT>1024&&_errLooksMaxTokM(_t2m)&&!_errWantsCompletionParamM(_t2m)){
+        const _sug=_extractSuggestedMaxTokM(_t2m);
+        const _nb=(_sug&&_sug<maxT)?_sug:Math.max(1024,Math.floor(maxT/2));
+        try{var _manK=parseInt(_out&&_out.maxTokens)||0;_maxTokMemM[_maxTokKeyM(cfg,_manK)]=_nb;console.info('[IB] 输出上限 '+maxT+' 被拒，按服务端口径改为 '+_nb+' 重试（本会话内该模型后续直接采用）')}catch(e){}
+        return callAI(cfg,_hist0,_sys0,onDelta,signal,Object.assign({},pa||{},{_maxTokOverride:_nb,_maxTokTries:_tries+1}));
+      }
+      if(!res.bodyUsed&&_t2m)errTxt=_t2m;/* 供末尾报错使用 */
     }
     /* v69-m t11：thinking 形参代次误判（新旧系形参互斥）→ 翻面重试一次 */
     if(!res.ok&&fmt==='anthropic'&&res.status===400&&/thinking|adaptive|budget_tokens|display/i.test(errTxt)){
@@ -7981,7 +8109,7 @@ async function genReply(cfg,internalCtx){
     if(!hist.length)throw new Error('没有可发送的上下文');
     const r=await callAIC(cfg,hist,sys,onDelta,myAc.signal,pa);/* v61-m t9：接入自动续写 */
     accT=r.t;accK=r.k;var _ru=r.u||null;
-    if(!accT.trim())throw new Error('返回为空');
+    if(!accT.trim())throw new Error((accK&&accK.trim())?'正文为空：思考内容占满了本次输出上限（可到 API → 全局设置 → 输出与续写 调大「单次输出上限」，或关闭该 AI 的思考链）':'返回为空');/* v130-p：把「返回为空」说清楚 */
     if(_fedH){try{_fedH.commit().catch(function(){})}catch(e9){}_fedH=null}_gqTaken=null;_pgTaken=null;/* fix-m①：请求已送达且有效——此刻才把工具/数据结果标“已回传”落库 */
     const _am0=await saveAi(cfg,accT,accK,aiEl,{myThread,myMsgs,sameConv,usage:_ru,truncated:_finTruncM(r.fin)});
     try{await _mToolLoop(cfg,pa,sys,hist,accT,_am0,{myThread,myMsgs,sameConv})}catch(e){}/* v84-m r1：工具/数据类指令在同一轮内多次调用（任务 1） */
@@ -8668,7 +8796,7 @@ const IBMCP={
     const headers={'Content-Type':'application/json','Accept':'application/json, text/event-stream'};
     if(this._sess[sv.alias])headers['Mcp-Session-Id']=this._sess[sv.alias];
       if(sv.token)headers['Authorization']=(/^bearer\s/i.test(sv.token)?sv.token:'Bearer '+sv.token);/* v131 需求③：官方 MCP 鉴权 */
-    const ac=new AbortController();const tmr=setTimeout(()=>ac.abort(),20000);
+    const ac=new AbortController();const tmr=setTimeout(()=>ac.abort(),method==='tools/call'?60000:20000);/* v131-p：联网搜索 / 抓网页一次常要十几秒，tools/call 放宽到 60s；握手与列工具仍 20s */
     let res;
     try{
       res=await fetch(sv.url,{method:'POST',headers:headers,signal:ac.signal,
@@ -9634,6 +9762,7 @@ async function renderApiGlobal(){
   sw2($('music-ctl'),!!_mp.musicAi.ctl);
   /* fix-r4：pres-on / pres-ai / pres-gap 回填随「离开回来」径退役（任务 3） */
   $('out-cont').value=['0','1','2','3','5','8'].indexOf(String(_out.maxContinues))!==-1?String(_out.maxContinues):'3';
+  try{var _omt=$('out-maxtok');if(_omt){var _mv=String(parseInt(_out.maxTokens)||0);_omt.value=_mv;if(_omt.value!==_mv)_omt.value='0'}}catch(e){}/* v130-p：单次输出上限回填（库值不在选项集时显示自动） */
   try{var _ot9=$('out-tools');if(_ot9){_ot9.value=String(_out.toolRounds!=null?_out.toolRounds:2);if(_ot9.value==='')_ot9.value='2'}}catch(e){}try{var _iw9=$('ic-ai-rounds');if(_iw9){_iw9.value=String(_out.wsRounds!=null?_out.wsRounds:3);if(_iw9.value==='')_iw9.value='3'}}catch(e){}/* fix-r5：随设置页渲染按库内真值重刷（原先只靠顶层抢跑回填一次，DB 就绪后不再更新显示）；库值不在选项集时按控件默认显示，与 out-cont 白名单回退同款 */
   /* v66-m t8：记忆系统改电脑端同款「预设 + 自定义」，钳位 100–99999 / 50–9999 */
   const _msApplyUI=(selId,val,def)=>{const sel=$(selId),inp=$(selId+'-custom');if(!sel)return;
@@ -9718,6 +9847,7 @@ $('out-cont').addEventListener('change',async()=>{
   await loadOUT();_out.maxContinues=Math.max(0,Math.min(10,parseInt($('out-cont').value)||3));
   try{await dbPut('apiSettings',_out);toast('已保存')}catch(e){toast('保存失败')}
 });
+try{var _omt2=$('out-maxtok');if(_omt2){_omt2.addEventListener('change',async function(){await loadOUT();_out.maxTokens=Math.max(0,parseInt(_omt2.value)||0);try{await dbPut('apiSettings',_out);toast(_out.maxTokens?('单次输出上限已设为 '+_out.maxTokens):'单次输出上限：自动（按服务商顶格）')}catch(e){toast('保存失败')}})}}catch(e){}/* v130-p：单次输出上限 */
 /* v14 修复：out-tools / ic-ai-rounds / PWA 预留三段绑定原被误嵌进上面 out-cont 的 change 处理器花括号里——不先动一次「最大自动续写」这些控件既不回填也不挂监听，动了还会重复挂载。现移出为顶层一次性绑定，回填统一走 loadOUT / loadMP。 */
 try{var _ot=$('out-tools');if(_ot){loadOUT().then(function(){_ot.value=String(_out.toolRounds!=null?_out.toolRounds:2)});_ot.addEventListener('change',async e=>{await loadOUT();_out.toolRounds=Math.max(0,Math.min(5,parseInt(e.target.value)||0));try{await dbPut('apiSettings',_out)}catch(err){console.warn('[IB] outputSettings 保存失败：',err)}/* v104-m：修错库 settings→apiSettings（库内无 settings store，原空 catch 吞错致改值不持久化），并补失败日志 */})}}catch(e){}/* v84-m r1：工具连续调用轮数（任务 1） */
 try{var _iwr=$('ic-ai-rounds');if(_iwr){loadOUT().then(function(){_iwr.value=String(_out.wsRounds!=null?_out.wsRounds:3)});_iwr.addEventListener('change',async function(){await loadOUT();_out.wsRounds=Math.max(0,Math.min(6,parseInt(_iwr.value)||0));try{await dbPut('apiSettings',_out);toast('ICode 连续操作已设为 '+_out.wsRounds+' 次')}catch(e){toast('保存失败')}})}}catch(e){}/* ICode Skill：工作区独立连续轮数，HELP 不计 */
@@ -10158,18 +10288,34 @@ var MCP_PRESETS=[/* v131 需求③：官方端点已核实入档（两家均为�
   {b:'mcd',alias:'mcdonalds',name:'麦当劳 MCP',url:'https://mcp.mcd.cn',
    desc:'官方端点已预填（mcp.mcd.cn）。到 open.mcd.cn/mcp 手机号登录 → 控制台激活并复制 Token 填入令牌栏即可连接。查菜单、领券、积分、麦乐送 / 到店 / 得来速下单都在；Token 代表你的会员身份，注意保密。'},
   {b:'lk',alias:'luckin',name:'瑞幸咖啡 MCP',url:'https://gwmcp.lkcoffee.com/order/user/mcp',
-   desc:'官方端点已预填（gwmcp.lkcoffee.com）。到 open.lkcoffee.com 登录领取 Token 填入令牌栏即可连接。找店、看饮品单、自动配券、下单取餐一条龙；Token 与账号绑定、约一个月有效，严禁泄露。'}
+   desc:'官方端点已预填（gwmcp.lkcoffee.com）。到 open.lkcoffee.com 登录领取 Token 填入令牌栏即可连接。找店、看饮品单、自动配券、下单取餐一条龙；Token 与账号绑定、约一个月有效，严禁泄露。'},
+  /* v131-p：联网搜索——两家官方公开端点均已实测：允许浏览器跨域（CORS *）、无令牌可用、Streamable HTTP。无需令牌的预设点「添加」直接入列并自动连接 */
+  {b:'pl',alias:'parallel',name:'Parallel 联网搜索',url:'https://search.parallel.ai/mcp',noToken:true,
+   desc:'Parallel 官方公开端点（search.parallel.ai），无需令牌。web_search 返回已整理好的网页摘录（多数问题可直接作答），web_fetch 抓取指定网页正文。点「添加」即接入并连接，之后 AI 就能自己上网查资料。公开端点有限流，重度使用可去 parallel.ai 领 API key 填入令牌栏。'},
+  {b:'exa',alias:'exa',name:'Exa 联网搜索',url:'https://mcp.exa.ai/mcp',noToken:true,
+   desc:'Exa 官方公开端点（mcp.exa.ai），无需令牌。web_search_exa 语义搜索、结果自带高亮摘要；web_fetch_exa 把网页读成 Markdown。与 Parallel 二选一或一起加都行；有 Exa API key 可填入令牌栏提额。'}
 ];
 function drawMcpPresets(){/* v130 需求①：预设卡——已添加同别名系或被 ✕ 隐藏的不再展示 */
   var box=$('mcp-presets');if(!box)return;box.innerHTML='';
   var svs=(_mp&&_mp.mcp&&_mp.mcp.servers)||[],hide=(_mp&&_mp.mcp&&_mp.mcp.presetHide)||{};
   MCP_PRESETS.forEach(function(p){
     if(hide[p.b])return;
-    if(svs.some(function(sv){return _mcpBrandOfAlias(sv&&sv.alias)===p.b}))return;
+    if(svs.some(function(sv){return _mcpPresetOfAlias(sv&&sv.alias)===p.b}))return;/* v131-p：搜索预设同样按别名系隐现 */
     var row=document.createElement('div');row.className='mcp-pre mcpb-'+p.b;
     row.innerHTML=MCP_BRANDS[p.b].logo+'<div class="mcp-pre-m"><div class="mcp-pre-n">'+esc(p.name)+'</div><div class="mcp-pre-d">'+esc(p.desc)+'</div></div>';
     var ab=document.createElement('button');ab.type='button';ab.className='btn mini';ab.textContent='添加';
-    ab.addEventListener('click',function(){
+    ab.addEventListener('click',async function(){
+      if(p.noToken){/* v131-p：无需令牌的预设一键入列并自动连接；失败保留条目供手动重连 */
+        ab.disabled=true;ab.textContent='连接中';
+        await loadMP();
+        if(_mp.mcp.servers.some(function(sv){return sv.alias===p.alias})){toast('别名已存在');drawMcpList();return}
+        var nsv={alias:p.alias,url:p.url,token:'',enabled:true,tools:[],status:''};
+        _mp.mcp.servers.push(nsv);_mp.mcp.enabled=true;await saveMP();
+        try{var cnt=await IBMCP.connect(nsv);toast('已接入 '+p.name+'，拉到 '+cnt+' 个工具')}
+        catch(err){nsv.status='bad';toast('已添加但连接失败：'+String((err&&err.message)||err).slice(0,80)+'，稍后点「连接」重试')}
+        await saveMP();drawMcpList();try{sw2($('mcp-enabled'),true)}catch(e){}
+        return;
+      }
       _mcpEditIdx=-1;openMcpEdit(null);
       $('mcpe-title').textContent='接入 '+p.name;
       $('mcpe-alias').value=p.alias;
@@ -10195,7 +10341,7 @@ function drawMcpList(){
     const row=document.createElement('div');row.className='diy-row';
     const main=document.createElement('div');main.className='diy-main';
     const n=(sv.tools||[]).length;
-    var _bl=_mcpBrandOfAlias(sv.alias);/* v130 需求①：品牌小徽标 */
+    var _bl=_mcpPresetOfAlias(sv.alias);/* v130 需求①：品牌小徽标；v131-p：搜索预设同样带徽标 */
     main.innerHTML='<div class="diy-name">'+(_bl?MCP_BRANDS[_bl].logo.replace('mcpb-logo','mcpb-logo mini'):'')+esc(sv.alias)+'　<span class="diy-st '+(sv.status==='ok'?'ok':sv.status==='bad'?'bad':'off')+'">'+(sv.status==='ok'?(n+' 个工具'):sv.status==='bad'?'连接失败':'未连接')+'</span></div>'
       +'<div class="diy-sub">'+esc(sv.url||'')+'</div>';
     main.addEventListener('click',()=>{_mcpEditIdx=i;openMcpEdit(sv)});
@@ -10732,7 +10878,7 @@ function _orientApply(){try{
   el=$('ui-bigtouch');if(el)el.addEventListener('click',async function(){await loadMP();_mp.ui=_mp.ui||{};_mp.ui.bigTouch=!_mp.ui.bigTouch;await saveMP();_uiApply();toast(_mp.ui.bigTouch?'触控目标已放大':'触控目标恢复标准')});
   setTimeout(function(){try{if(window.IBNative&&window.IBNative.available){var _bg=$('pres-bg');var _row=_bg&&_bg.closest('.tog');if(_row)_row.style.display=''}}catch(e){}},1200);/* v116-p：壳内显露「后台 Presence（App）」开关（桥在文末激活，故延时探测；浏览器 / PWA 保持隐藏） */
 })();
-var IB_VER='v129-p',IB_VER_DATE='2026-08-20';/* v86-m r3：版本号占位——展示于 PWA 卡、写入导出档与运行时 manifest（本轮任务 5 待办项） */
+var IB_VER='v131-p',IB_VER_DATE='2026-08-20';/* v86-m r3：版本号占位——展示于 PWA 卡、写入导出档与运行时 manifest（本轮任务 5 待办项） */
 (function _appVerDraw(){var e=document.getElementById('app-ver');if(e)e.textContent='InternalBeyond Mobile '+IB_VER+'（'+IB_VER_DATE+'）'})();
 function _lkVeilOff(){try{var v=document.getElementById('lk-preveil');if(v){v.classList.add('off');setTimeout(function(){try{v.remove()}catch(e){}},420)}}catch(e){}}/* fix-r4：预遮罩揭幕（任务 8） */
 async function _lkBoot(){try{await loadBgs()}catch(e){}var lk=_lkCfg();try{localStorage.setItem('ib_lockOn',lk&&lk.on?'1':'0')}catch(e){}/* v101-m：启动后把 DB 真值回写同步镜像 */if(lk&&lk.on)_lkShow();else _lkVeilOff()}
@@ -13648,7 +13794,7 @@ async function deskApplyLayout(){
   try{if(typeof _dkOsFlow==='function')_dkOsFlow()}catch(e9){}/* v127-p：排序/显隐落定后铺页 */
   return order;
 }
-async function _dkSave(order,hidden){await loadMP();_mp.desk={order:order,hidden:hidden};await saveMP()}
+async function _dkSave(order,hidden,pages){await loadMP();var prev=_mp.desk||{};_mp.desk={order:order,hidden:hidden,pages:(pages!==undefined?pages:(prev.pages||{}))};await saveMP()}/* v130-p：页位表随排序一起存，未传时保留 */
 async function _dkRenderSet(){
   var host=$('dk-setlist');if(!host)return;
   var order=await deskApplyLayout();
@@ -13684,7 +13830,8 @@ async function _dkRenderSet(){
     var it=e.target.closest('.sb-desk>[data-dk]');if(!it)return;
     sx=e.clientX;sy=e.clientY;
     if(T)clearTimeout(T);
-    T=setTimeout(function(){T=null;_dkStart(it,e.pointerId,sx,sy)},480);
+    var pid=e.pointerId;
+    T=setTimeout(function(){T=null;_dkStart(it,pid,sx,sy)},480);
   });
   host.addEventListener('pointermove',function(e){
     if(T&&(Math.abs(e.clientX-sx)>12||Math.abs(e.clientY-sy)>12)){clearTimeout(T);T=null}
@@ -13694,39 +13841,65 @@ async function _dkRenderSet(){
     if(T){clearTimeout(T);T=null}
     if(drag)_dkEnd(e);
   })});
-  async function _dkStart(it,pid,x,y){
+  function _dkStart(it,pid,x,y){/* v130-p：改同步建立拖动态——原先 await deskApplyLayout()（loadMP＋整桌重铺）期间 drag 仍为空：touchmove 没被拦截、手指微动就触发原生横滑翻页，且重铺会复位滚动位置，长按起手就可能滑回第一页；全局 order 直接从 DOM 的 style.order 读 */
     try{if(navigator.vibrate)navigator.vibrate(12)}catch(e){}
     var r=it.getBoundingClientRect();
     var g=it.cloneNode(true);g.classList.add('dk-ghost');
     g.style.cssText+=';position:fixed;left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;margin:0;z-index:400;pointer-events:none';
     document.body.appendChild(g);
-    var order=await deskApplyLayout();
-    drag={it:it,g:g,dx:x-r.left,dy:y-r.top,order:order};
+    var els=_dkEls().slice().sort(function(a,b){return (parseInt(a.style.order)||0)-(parseInt(b.style.order)||0)});
+    var order=els.map(function(el){return el.dataset.dk});
+    var osw=document.getElementById('dk-osw');var pg0=osw?_dkOsIdx(osw):0;
+    drag={it:it,g:g,dx:x-r.left,dy:y-r.top,order:order,srcPg:pg0};
     it.classList.add('dk-src');document.body.classList.add('dk-drag');
-    try{it.setPointerCapture(pid)}catch(e){}
+    try{_dkOsEdgeReset()}catch(e){}
+    try{host.setPointerCapture(pid)}catch(e){try{it.setPointerCapture(pid)}catch(e2){}}/* v130-p：捕获挂在分区容器——条目本身拖动中会被挪到别页网格，挂在条目上的捕获会随 DOM 搬迁被释放 */
   }/* v79-m r5：拖到底部移除区退役——长按拖移只做排序 */
   function _dkMove(e){
     if(!drag)return;
     drag.g.style.left=(e.clientX-drag.dx)+'px';drag.g.style.top=(e.clientY-drag.dy)+'px';
-    try{_dkOsEdge(e)}catch(x9){}/* v127-p：拖到屏幕左右边缘悬停约 0.45s 翻页 */
+    try{_dkOsEdge(e)}catch(x9){}/* 拖到屏幕左右边缘悬停约 0.45s 翻页 */
     var t=document.elementFromPoint(e.clientX,e.clientY);
-    t=t&&t.closest?t.closest('.sb-desk>[data-dk]'):null;
-    if(!t||t===drag.it)return;
-    var k=drag.it.dataset.dk,tk=t.dataset.dk;
-    var oi=drag.order.indexOf(k),ti=drag.order.indexOf(tk);
-    if(oi<0||ti<0||oi===ti)return;
-    drag.order.splice(oi,1);drag.order.splice(ti,0,k);
-    _dkEls().forEach(function(el){el.style.order=drag.order.indexOf(el.dataset.dk)});
+    var tIt=t&&t.closest?t.closest('.sb-desk>[data-dk]'):null;
+    var osw=document.getElementById('dk-osw');
+    var k=drag.it.dataset.dk;
+    if(tIt&&tIt!==drag.it){
+      var tk=tIt.dataset.dk;
+      var oi=drag.order.indexOf(k),ti=drag.order.indexOf(tk);
+      if(oi<0||ti<0||oi===ti)return;
+      drag.order.splice(oi,1);drag.order.splice(ti,0,k);
+      _dkEls().forEach(function(el){el.style.order=drag.order.indexOf(el.dataset.dk)});
+      if(osw&&tIt.parentNode!==drag.it.parentNode){try{tIt.parentNode.appendChild(drag.it)}catch(x5){}}/* v130-p：跨页悬停即把占位挪进目标页网格（order 已是全局序，网格内自然就位），松手前就能看到落点 */
+      return;
+    }
+    if(osw){/* v130-p：悬在别页的空白处（该页没有条目可命中）——挪到该页末尾；此前命中不到条目就什么都不发生，空页永远放不进东西 */
+      var pgEl=t&&t.closest?t.closest('#dk-osw>.desk-pg'):null;
+      var grid=pgEl?pgEl.querySelector('.sb-desk'):null;
+      if(grid&&grid!==drag.it.parentNode){
+        var last=null;Array.prototype.forEach.call(grid.querySelectorAll(':scope>[data-dk]'),function(el){if(el!==drag.it)last=el});
+        var oi2=drag.order.indexOf(k);if(oi2>=0)drag.order.splice(oi2,1);
+        if(last){drag.order.splice(drag.order.indexOf(last.dataset.dk)+1,0,k)}else drag.order.push(k);
+        _dkEls().forEach(function(el){el.style.order=drag.order.indexOf(el.dataset.dk)});
+        try{grid.appendChild(drag.it)}catch(x6){}
+      }
+    }
   }
   async function _dkEnd(e){
-    try{_dkOsEdge({clientX:-999})}catch(x9){}/* v127-p：松手清掉未触发的边缘翻页计时 */
+    try{_dkOsEdgeReset()}catch(x9){}/* 松手清掉未触发的边缘翻页计时 */
     var d=drag;drag=null;
     supClick=true;setTimeout(function(){supClick=false},350);
     d.it.classList.remove('dk-src');document.body.classList.remove('dk-drag');
     try{d.g.remove()}catch(x){}
-    await loadMP();var hid=((_mp.desk&&_mp.desk.hidden)||[]).slice();
-    await _dkSave(d.order,hid);
-    deskApplyLayout();
+    var osw=document.getElementById('dk-osw');
+    var dropPg=0;/* v130-p：落点页＝占位当前所在页（拖动中已随悬停挪动）；跨页则记显式页位（1 起），拖回首页或同页内调序不改页位表 */
+    if(osw){var pgEl=d.it.closest('#dk-osw>.desk-pg');dropPg=pgEl?Array.prototype.indexOf.call(osw.children,pgEl):_dkOsIdx(osw);if(dropPg<0)dropPg=0}
+    await loadMP();var dd=_mp.desk||{};var hid=((dd.hidden)||[]).slice();var pages=Object.assign({},dd.pages||{});
+    var k=d.it.dataset.dk;
+    if(osw&&_dkOsOn()&&dropPg!==d.srcPg){if(dropPg>0)pages[k]=dropPg;else delete pages[k]}
+    await _dkSave(d.order,hid,pages);
+    await deskApplyLayout();
+    if(osw){try{_dkOsGoto(Math.min(dropPg,osw.children.length-1))}catch(x8){}}/* 重铺后停在落点页 */
+    if(_dkOsPend){try{_dkOsFlow()}catch(x10){}}/* 拖动期间被压下的重铺请求补跑 */
   }
 })();
 /* 搜索胶囊 */
@@ -14945,7 +15118,7 @@ body:not(.theme-infernal) .pv-para.pv-hit{background:rgba(114,168,216,0.16);box-
 /* 全屏编辑页 */
 .ed-done{border:none;background:none;color:var(--acc);font-size:0.9rem;font-weight:600;padding:8px 4px;cursor:pointer;font-family:inherit;letter-spacing:0.06em}
 #sub-blog-editor .sub-title{flex:1;text-align:center}
-.ed-page{display:flex;flex-direction:column;height:calc(100dvh - 58px - var(--sat));padding:10px 18px calc(10px + var(--sab));box-sizing:border-box}
+.ed-page{display:flex;flex-direction:column;height:calc(100dvh * var(--ibZoomInv,1) - 58px - var(--sat));/* v131-p：同上，随界面缩放校正 */padding:10px 18px calc(10px + var(--sab));box-sizing:border-box}
 .ed-title-l{border:none;background:none;outline:none;font-family:var(--serif);font-weight:600;font-size:1.5rem;color:var(--tx);padding:6px 0 2px;width:100%}
 .ed-sub-l{border:none;background:none;outline:none;font-size:0.9rem;color:var(--tx2);padding:2px 0 10px;width:100%;font-family:inherit}
 .ed-title-l::placeholder{color:var(--tx3);opacity:0.55}
@@ -16248,6 +16421,8 @@ body.dk-os2.on-desk main{padding-bottom:calc(6px + var(--sab))}/* fix-r6：Desk 
 body.dk-os2.dk-drag #sec-profile-cal::before,body.dk-os2.dk-drag #sec-profile-cal::after{content:'';position:fixed;top:22%;bottom:22%;width:22px;z-index:390;pointer-events:none;opacity:0.75}/* 拖动中的翻页边缘提示 */
 body.dk-os2.dk-drag #sec-profile-cal::before{left:0;border-radius:0 14px 14px 0;background:linear-gradient(90deg,rgba(122,162,222,0.3),transparent)}
 body.dk-os2.dk-drag #sec-profile-cal::after{right:0;border-radius:14px 0 0 14px;background:linear-gradient(270deg,rgba(122,162,222,0.3),transparent)}
+#dk-osw>.desk-pg.dk-tmp::after{content:'新分屏 · 松手放到这里';position:absolute;left:0;right:0;top:42%;text-align:center;font-size:0.7rem;letter-spacing:0.18em;color:var(--tx3);pointer-events:none}/* v130-p：拖动中临时开出的新分屏提示 */
+#dk-osw>.desk-pg.dk-tmp{outline:1px dashed rgba(122,162,222,0.45);outline-offset:-8px;border-radius:18px}
 /* 分页桌面紧凑规格：默认页 1＝英雄区＋两排图标＋月历＋播放器正好一屏；月历（用户点名喜欢）分毫未动 */
 body.dk-os2 .sb-desk{gap:12px 9px}
 body.dk-os2 .dk-osgrid>[data-dk^="app:"]{margin-bottom:12px}/* fix-r6：第 2 页起图标行加 12px 下边距——与 .wgt 的外边距对齐成 24px 行距，原 12px 图标贴着小组件；量高已含外边距（fix-r5），装页不受影响 */
